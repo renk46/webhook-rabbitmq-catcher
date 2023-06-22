@@ -1,0 +1,21 @@
+version: '3'
+services:
+  rabbitmq:
+    image: rabbitmq:3.10.7-management
+    ports:
+      - 15672:15672
+      - 5672:5672
+
+  backend:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    image: backend:v1.0.0
+    command: python manage.py runserver 0.0.0.0:8080
+    ports:
+      - "8080:8080"
+    environment:
+      - RABBIT_HOST=rabbitmq
+      - RABBIT_QUEUE=amo
+    depends_on:
+      - rabbitmq

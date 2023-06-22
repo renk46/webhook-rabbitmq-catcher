@@ -1,0 +1,12 @@
+Django
+djangorestframework
+djangorestframework_simplejwt
+markdown
+django-filter
+django-cors-headers
+environ
+django-environ
+django-background-tasks
+requests
+jsonschema
+pika
