@@ -16,6 +16,6 @@ services:
       - "8080:8080"
     environment:
       - RABBIT_HOST=rabbitmq
-      - RABBIT_QUEUE=amo
+      - RABBIT_QUEUE=main
     depends_on:
       - rabbitmq
