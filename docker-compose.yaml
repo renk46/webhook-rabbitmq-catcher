@@ -6,16 +6,18 @@ services:
       - 15672:15672
       - 5672:5672
 
-  backend:
+  webhook-catcher:
     build:
       context: ./api
       dockerfile: Dockerfile
-    image: backend:v1.0.0
+    image: webhook-catcher:v0.0.3
     command: python manage.py runserver 0.0.0.0:8080
     ports:
       - "8080:8080"
     environment:
       - RABBIT_HOST=rabbitmq
-      - RABBIT_QUEUE=main
+      - RABBIT_DEFAULT_QUEUE=main
+      - PROXY_MODE=1
+      - PROXY_ENDPOINT=http://localhost:8080/webhook
     depends_on:
       - rabbitmq
