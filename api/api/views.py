@@ -18,7 +18,7 @@ class WebHookGrabber(APIView):
         token = self.request.query_params.get('hub.verify_token')
 
         if mode == "subscribe" and token == os.environ.get('FACEBOOK_WEBHOOK_CHECK', '123'):
-            return Response(challenge)
+            return Response(int(challenge))
         else:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
