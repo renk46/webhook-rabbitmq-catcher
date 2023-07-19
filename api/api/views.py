@@ -8,14 +8,19 @@ from api.broker import Broker
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
 
 class WebHookGrabber(APIView):
     """Grabber WebHook"""
     def get(self, request, app=os.environ.get('RABBIT_DEFAULT_QUEUE', 'main'), scope=None):
-        logging.info(app)
-        logging.info(scope)
-        logging.info(request.query_params)
-        return Response()
+        mode = self.request.query_params.get('hub.mode')
+        challenge = self.request.query_params.get('hub.challenge')
+        token = self.request.query_params.get('hub.verify_token')
+
+        if mode == "subscribe" and token == os.environ.get('FACEBOOK_WEBHOOK_CHECK', '123'):
+            return Response(challenge)
+        else:
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
     def post(self, request, app=os.environ.get('RABBIT_DEFAULT_QUEUE', 'main'), scope=None):
         logging.info(request.META)
