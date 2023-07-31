@@ -8,5 +8,10 @@ urlpatterns = [
     path('<slug:app>/', WebHookGrabber.as_view()),
     path('<slug:app>/<slug:scope>', WebHookGrabber.as_view()),
     path('<slug:app>/<slug:scope>/', WebHookGrabber.as_view()),
+    path('<slug:app>/<slug:scope>:<slug:token>', WebHookGrabber.as_view()),
+    path('<slug:app>/<slug:scope>:<slug:token>/', WebHookGrabber.as_view()),
+    path('grab/<slug:app>/<slug:scope>', GrabView.as_view()),
     path('grab/<slug:app>/<slug:scope>/', GrabView.as_view()),
+    path('grab/<slug:app>/<slug:scope>:<slug:token>', GrabView.as_view()),
+    path('grab/<slug:app>/<slug:scope>:<slug:token>/', GrabView.as_view()),
 ]

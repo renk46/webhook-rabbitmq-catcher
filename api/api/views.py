@@ -12,7 +12,7 @@ from rest_framework import status
 
 class WebHookGrabber(APIView):
     """Grabber WebHook"""
-    def get(self, request, app=os.environ.get('RABBIT_DEFAULT_QUEUE', 'main'), scope=None):
+    def get(self, request, app=os.environ.get('RABBIT_DEFAULT_QUEUE', 'main'), scope=None, token=None):
         mode = self.request.query_params.get('hub.mode')
         challenge = self.request.query_params.get('hub.challenge')
         token = self.request.query_params.get('hub.verify_token')
@@ -22,7 +22,7 @@ class WebHookGrabber(APIView):
         else:
             return Response(status=status.HTTP_403_FORBIDDEN)
 
-    def post(self, request, app=os.environ.get('RABBIT_DEFAULT_QUEUE', 'main'), scope=None):
+    def post(self, request, app=os.environ.get('RABBIT_DEFAULT_QUEUE', 'main'), scope=None, token=None):
         logging.info(request.META)
         logging.info(request.body)
         logging.info(request.POST)
@@ -35,6 +35,7 @@ class WebHookGrabber(APIView):
                 url = os.environ.get('PROXY_ENDPOINT', 'http://localhost:8888')
                 url = f"{url}/{app}" if app else url
                 url = f"{url}/{scope}" if scope else url
+                url = f"{url}:{token}" if token else url
                 headers = {'Content-Type': 'application/json'}
                 requests.post(url, body, timeout=30, headers=headers)
             except requests.exceptions.ConnectionError:
@@ -62,13 +63,14 @@ class GrabView(APIView):
             connection.close()
             return count
 
-    def get(self, request, app=os.environ.get('RABBIT_DEFAULT_QUEUE', 'main'), scope=None):
+    def get(self, request, app=os.environ.get('RABBIT_DEFAULT_QUEUE', 'main'), scope=None, token=None):
         if not os.environ.get('PROXY_MODE', False): return
         queue = f'{app}-{scope}' if scope else f'{app}'
 
         url = os.environ.get('PROXY_ENDPOINT', 'http://localhost:8888')
         url = f"{url}/{app}" if app else url
         url = f"{url}/{scope}" if scope else url
+        url = f"{url}:{token}" if token else url
 
         count = self.get_and_send_message(queue, url)
 
